@@ -131,6 +131,7 @@ df_hotel_encoded = pd.get_dummies(df_hotel, columns=['customer_type'], drop_firs
 # Seleccionar columnas relevantes
 correlation_matrix = df_hotel_encoded[['is_canceled'] + [col for col in df_hotel_encoded.columns if 'customer_type_' in col]].corr()
 
+<<<<<<< Updated upstream
 column_labels = {
     'is_canceled': 'Cancelaciones',
     'customer_type_Contract': 'Contract',
@@ -141,6 +142,8 @@ column_labels = {
 correlation_matrix.rename(columns=column_labels, index=column_labels, inplace=True)
 
 
+=======
+>>>>>>> Stashed changes
 # Crear Heatmap
 fig, ax = plt.subplots(figsize=(8, 6))
 sns.heatmap(
@@ -153,8 +156,68 @@ sns.heatmap(
 )
 
 # Personalizar
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 plt.tight_layout()
 
 # Mostrar en Streamlit
 st.pyplot(fig)
 
+<<<<<<< Updated upstream
+=======
+
+import plotly.express as px
+
+st.header("Distribución Geográfica de Reservas")
+
+# Filtrar datos relevantes
+country_data = df_hotel['country'].value_counts().reset_index()
+country_data.columns = ['country', 'reservations']
+fig = px.choropleth(
+    country_data,
+    locations='country',
+    locationmode='ISO-3',  # Usa códigos ISO Alpha-3 para identificar los países
+    color='reservations',
+    color_continuous_scale='Blues',  # Escala de colores perceptualmente amigable
+    title='Distribución de Reservas por País',
+    labels={'reservations': 'Reservas'},
+)
+
+# Personalizar el enfoque en España y Portugal
+fig.update_geos(
+    resolution=50,                # Mejor resolución de fronteras
+    showcountries=True,           # Mostrar fronteras de países
+    showcoastlines=True,          # Mostrar líneas de costa
+    showland=True,                # Mostrar la tierra
+    landcolor="white",            # Color de la tierra
+    projection_type="mercator",   # Proyección Mercator para mejor precisión local
+    center={"lat": 50, "lon": 10}, # Centrar en España y Portugal
+    lataxis_range=[30, 75],       # Limitar la vista en latitud (sur y norte)
+    lonaxis_range=[-25, 40],       # Limitar la vista en longitud (oeste y este)
+)
+
+# Personalizar la barra de colores
+fig.update_layout(
+    coloraxis_colorbar=dict(
+        title="Reservas",
+        tickvals=[0, 10000, 20000, 30000, 40000, 50000],
+        ticktext=["0", "10k", "20k", "30k", "40k", "50k"],
+        tickmode="array",  # Asegura que se usen los valores especificados
+        ticks="inside",     # Muestra las marcas dentro de la barra
+        ticklen=5,          # Longitud de las marcas
+        tickwidth=2,        # Ancho de las marcas
+    ),
+    geo=dict(
+        bgcolor='rgba(0,0,0,0)'  # Fondo transparente
+    ),height=800,  # Aumentar la altura del gráfico
+    width=1200 
+)
+
+# Mostrar el mapa en Streamlit
+st.plotly_chart(fig)
+
+
+
+>>>>>>> Stashed changes
