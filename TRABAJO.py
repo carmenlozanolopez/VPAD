@@ -23,8 +23,12 @@ df_hotel['arrival_date_month'] = pd.Categorical(
     df_hotel['arrival_date_month'], categories=month_order, ordered=True
 )
 
-# Título de la aplicación
+# Título
 st.title("Visualización de la Ocupación del Hotel")
+texto='''Con esta visualización podemos responder a preguntas como: ¿Cuándo se alcanzan los picos de ocupación?
+        ¿Cuál es la diferencia de ocupación entre los dos tipos de hotel?, ¿Cuándo es la temporada baja?,
+        ¿Qué meses necesitaremos más personal?'''
+st.text(texto)
 
 # Filtro interactivo para seleccionar el año
 selected_year = st.selectbox("Selecciona el año:", sorted(df_hotel['arrival_date_year'].unique()))
@@ -37,13 +41,14 @@ occupancy_data = df_filtered.groupby(['arrival_date_month', 'hotel']).size().res
 
 # Crear el gráfico
 fig, ax = plt.subplots(figsize=(12, 6))
-sns.barplot(
+sns.lineplot(
     data=occupancy_data,
     x='arrival_date_month',
     y='reservations',
     hue='hotel',
     palette='viridis',
-    ax=ax
+    ax=ax,
+    markers=True
 )
 
 # Personalizar el gráfico
