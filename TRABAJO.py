@@ -131,7 +131,7 @@ df_hotel_encoded = pd.get_dummies(df_hotel, columns=['customer_type'], drop_firs
 # Seleccionar columnas relevantes
 correlation_matrix = df_hotel_encoded[['is_canceled'] + [col for col in df_hotel_encoded.columns if 'customer_type_' in col]].corr()
 
-<<<<<<< Updated upstream
+
 column_labels = {
     'is_canceled': 'Cancelaciones',
     'customer_type_Contract': 'Contract',
@@ -142,8 +142,7 @@ column_labels = {
 correlation_matrix.rename(columns=column_labels, index=column_labels, inplace=True)
 
 
-=======
->>>>>>> Stashed changes
+
 # Crear Heatmap
 fig, ax = plt.subplots(figsize=(8, 6))
 sns.heatmap(
@@ -154,19 +153,10 @@ sns.heatmap(
     linewidths=0.5,
     ax=ax
 )
-
-# Personalizar
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 plt.tight_layout()
 
 # Mostrar en Streamlit
 st.pyplot(fig)
-
-<<<<<<< Updated upstream
-=======
 
 import plotly.express as px
 
@@ -218,6 +208,3 @@ fig.update_layout(
 # Mostrar el mapa en Streamlit
 st.plotly_chart(fig)
 
-
-
->>>>>>> Stashed changes
