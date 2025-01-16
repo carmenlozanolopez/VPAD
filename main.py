@@ -146,8 +146,7 @@ def cancelaciones(df):
     # Asegúrate de que hay datos después de filtrar
     if not client_selec.empty:
         # Índices de años y meses
-        months = ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"]               ]
+        months = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"]               
         meses = [ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
         # Filtrar cancelaciones
         #Datos por mes
