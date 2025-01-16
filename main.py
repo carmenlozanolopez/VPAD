@@ -80,17 +80,19 @@ def distribucion_geografica(df):
 #########################
 # Función: Heatmap interactivo
 def heatmap_interactivo(df,cancel):
-    st.title("Reservas Realizadas por Mes y Día de la Semana")
-
     df['reservation_status_date'] = pd.to_datetime(df['reservation_status_date'], errors='coerce')
     df['day_of_week'] = df['reservation_status_date'].dt.dayofweek
     df['month'] = df['reservation_status_date'].dt.month
     if cancel:
         df_bookings = df[df['is_canceled'] == 1]
         color='Reds'
+        texto = 'Cancelaciones' 
     else:
         df_bookings = df[df['is_canceled'] == 0]
         color='Blues'
+        texto = 'Reservas'
+
+    st.title(f"{texto} Realizadas por Mes y Día de la Semana")
     selected_days = st.multiselect("Selecciona los Días de la Semana:", ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'], default=['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'])
     selected_months = st.multiselect("Selecciona los Meses:", ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'], default=['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'])
 
@@ -104,7 +106,7 @@ def heatmap_interactivo(df,cancel):
     yticks_labels = [month for i, month in enumerate(['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']) if i + 1 in month_indices]
 
     fig, ax = plt.subplots(figsize=(12, 8))
-    sns.heatmap(booking_counts, annot=True, fmt='d', cmap=color, linewidths=0.5, cbar_kws={'label': 'Número de Reservas'}, ax=ax)
+    sns.heatmap(booking_counts, annot=True, fmt='d', cmap=color, linewidths=0.5, cbar_kws={'label': f'Número de {texto}'}, ax=ax)
     ax.set_xlabel('Día de la Semana', fontsize=12)
     ax.set_ylabel('Mes', fontsize=12)
     ax.set_xticks(range(len(xticks_labels)))
