@@ -80,17 +80,19 @@ def distribucion_geografica(df):
 #########################
 # Función: Heatmap interactivo
 def heatmap_interactivo(df,cancel):
-    st.title("Reservas Realizadas por Mes y Día de la Semana")
-
     df['reservation_status_date'] = pd.to_datetime(df['reservation_status_date'], errors='coerce')
     df['day_of_week'] = df['reservation_status_date'].dt.dayofweek
     df['month'] = df['reservation_status_date'].dt.month
     if cancel:
         df_bookings = df[df['is_canceled'] == 1]
         color='Reds'
+        texto = 'Cancelaciones' 
     else:
         df_bookings = df[df['is_canceled'] == 0]
         color='Blues'
+        texto = 'Reservas'
+
+    st.title(f"{texto} Realizadas por Mes y Día de la Semana")
     selected_days = st.multiselect("Selecciona los Días de la Semana:", ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'], default=['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'])
     selected_months = st.multiselect("Selecciona los Meses:", ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'], default=['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'])
 
@@ -104,7 +106,7 @@ def heatmap_interactivo(df,cancel):
     yticks_labels = [month for i, month in enumerate(['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']) if i + 1 in month_indices]
 
     fig, ax = plt.subplots(figsize=(12, 8))
-    sns.heatmap(booking_counts, annot=True, fmt='d', cmap=color, linewidths=0.5, cbar_kws={'label': 'Número de Reservas'}, ax=ax)
+    sns.heatmap(booking_counts, annot=True, fmt='d', cmap=color, linewidths=0.5, cbar_kws={'label': f'Número de {texto}'}, ax=ax)
     ax.set_xlabel('Día de la Semana', fontsize=12)
     ax.set_ylabel('Mes', fontsize=12)
     ax.set_xticks(range(len(xticks_labels)))
@@ -115,63 +117,58 @@ def heatmap_interactivo(df,cancel):
 
 
 def cancelaciones(df):
-        # Mapeo para los tipos de reservas y meses
+    # Mapeo para los tipos de reservas y meses
     map_reserva = {
         'Direct': 'Directa', 'Corporate': 'Empresa', 'Online TA': 'Agencia Online', 
         'Offline TA/TO': 'Agencia no Online', 'Complementary': 'Complementario', 
         'Groups': 'Grupo', 'Undefined': 'Indefinido', 'Aviation': 'Avión'}
-
     map_meses = {
         'July': 'Jul', 'August': 'Ago', 'September': 'Sep', 'October': 'Oct', 
         'November': 'Nov', 'December': 'Dec', 'January': 'Ene', 'February': 'Feb', 
-        'March': 'Mar', 'April': 'Abr', 'June': 'Jun'
-    }
-
+        'March': 'Mar', 'April': 'Abr', 'June': 'Jun'}
+    df['reservation_status_date'] = pd.to_datetime(df['reservation_status_date'], errors='coerce')
+    df['day_of_week'] = df['reservation_status_date'].dt.dayofweek
+    df['month'] = df['reservation_status_date'].dt.month
     # Título y descripción
     titulo = "Análisis de las cancelaciones por tipo de reserva"
     descripcion = """Se van a buscar las relaciones entre los diversos tipos de reservas y cancelaciones de las mismas"""
     st.title(titulo)
     st.write(descripcion)
-
     # Selección de tipo de cancelación que quiere consultar
     reserva_hecha = list(df['market_segment'].unique())
     reserva_hecha.append('Todos')
     market = st.selectbox('Tipo de reserva para consultar', reserva_hecha)
-
     # Filtrar los datos según el tipo de reserva seleccionado
     if market == 'Todos':
         client_selec = df
     else:
         client_selec = df[df['market_segment'] == market]
-
     # Asegúrate de que hay datos después de filtrar
     if not client_selec.empty:
         # Índices de años y meses
-        years = client_selec['arrival_date_year'].unique()
-        months = ['July', 'August', 'September', 'October', 'November', 'December', 
-                'January', 'February', 'March', 'April', 'May', 'June']
-        meses = ['Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
-
+        months = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"]               ]
+        meses = [ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
         # Filtrar cancelaciones
-        cancelado = client_selec['is_canceled'] == 1
-
-        # Datos agregados por año
-        selecbyyear = client_selec.groupby('arrival_date_year').size().tolist()
-        selecbyyearcanc = client_selec[cancelado].groupby('arrival_date_year').size().tolist()
-
-        # Gráfico de barras de cancelaciones vs reservas
-        fig, ax = plt.subplots(figsize=(8, 5))  # Tamaño ajustado
-        ax.bar(years, selecbyyearcanc, color="red", label="Cancelaciones")
-        ax.bar(years, selecbyyear, width=0.5, align="edge", color="skyblue", label="Reservas Totales")
-        ax.set_title("Cancelaciones frente a número de reservas", fontsize=10)  
-        ax.set_xlabel("Años", fontsize=9)  
-        x_ticks = [2015, 2016, 2017]
-        ax.set_xticks(x_ticks)  
-        ax.set_xticklabels(x_ticks)
-        ax.set_ylabel("Nº Clientes hicieron la reserva con " + market, fontsize=9)  
-        ax.legend(fontsize=8)  
-
-        st.pyplot(fig)
+        #Datos por mes
+        years_=['2015','2016','2017']
+        info_y= st.selectbox ('Selecciona el año:', years_)         
+        selecbymonth = [client_selec[client_selec['arrival_date_month']==i] [client_selec['arrival_date_year']==int(info_y)]['hotel'].count() for i in months]
+        selecbymonth_cancel = [client_selec[client_selec['arrival_date_month']==i][client_selec['arrival_date_year']==int(info_y)][client_selec['is_canceled']==1]['hotel'].count() for i in months]
+        tasas_mont=[100*selecbymonth_cancel[i]/selecbymonth[i] for i in range(len(selecbymonth))]
+        # # Gráfico de barras de cancelaciones vs reservas
+        fig2, ax2 = plt.subplots()
+        ax2.bar(meses, selecbymonth_cancel, color="red") 
+        ax2.bar(meses, selecbymonth, width=0.5, align="edge", color="skyblue")
+        ax2.set_title("Reservas por meses en el año {0}".format(info_y))
+        ax2.set_xlabel("Meses")
+        ax2.set_ylabel("Nº Clientes hicieron la reserva con {0} ".format(market))
+        ax2_2 = ax2.twinx()  # Crear un segundo eje Y
+        ax2_2.plot(meses, tasas_mont, color="orange", marker="o", label="Tasa de Cancelación (%)")
+        ax2_2.set_ylabel("Tasa de Cancelación (%)", color="orange")
+        ax2_2.tick_params(axis="y", labelcolor="orange")
+        st.pyplot(fig2)     
+                
     
 
 #########################
