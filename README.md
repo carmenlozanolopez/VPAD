@@ -24,8 +24,8 @@ cd visualizacion-hotelera
 ## Ejecución de la Aplicación
 
 Para ejecutar la aplicación, utiliza el siguiente comando:
-```
-streamlit run app.py```
+
+```streamlit run app.py```
 
 ## Características Principales
 
