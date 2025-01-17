@@ -25,9 +25,9 @@ cd visualizacion-hotelera
 pip install -r requirements.txt```
 
 ## Ejecución de la Aplicación
-```
+
 Para ejecutar la aplicación, utiliza el siguiente comando:
-```
+
 streamlit run app.py```
 
 ## Características Principales
