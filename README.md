@@ -20,9 +20,6 @@ git clone https://github.com/tu_usuario/visualizacion-hotelera.git
 ```
 cd visualizacion-hotelera
 ```
-3. Instala las dependencias:
-```
-pip install -r requirements.txt```
 
 ## Ejecución de la Aplicación
 
